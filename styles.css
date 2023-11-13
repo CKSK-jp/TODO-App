@@ -1,0 +1,65 @@
+h1{
+  color: white;
+}
+
+.completed-todo {
+  text-decoration: line-through;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  background-color: #272727;
+}
+
+#main-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #474748;
+  width: 50vw;
+  padding-bottom: 10px;
+  padding-top: 20px;
+  border-radius: 20px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+  width: 60vh;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: solid 0.05px grey;
+  padding: 5px;
+  margin: 5px;
+}
+
+span {
+  flex: 1;
+  color: white;
+}
+
+button {
+  border-radius: 5px;
+  border: 0.2px dotted black;
+  background-color: white;
+  margin: 2px;
+}
+
+.completionBtn:hover {
+  background-color: lightgreen;
+}
+
+.removeBtn:hover {
+  background-color: lightcoral;
+}
+
+.addBtn:hover {
+  background-color: gold;
+}
