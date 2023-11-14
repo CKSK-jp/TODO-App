@@ -2,7 +2,7 @@ h1{
   color: white;
 }
 
-.completed-todo {
+.completed-task {
   text-decoration: line-through;
   text-decoration-color: red;
 }

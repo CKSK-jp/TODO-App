@@ -1,24 +1,24 @@
-const todo = document.querySelector('#task');
+const taskInput = document.querySelector('#task-input');
 const form = document.querySelector('#todo-form');
 const todoList = document.querySelector('#todo-list')
 
-form.addEventListener('submit', function (e) {
-  e.preventDefault();
-  // check if entered value is not empty, print error message if so
-  if (todo.value === '') {
-    alert('Your task cannot be empty!');
-  } else {
-    // create a new element to store the task in ul
-    // assign the new task the value entered by the user
+// Retrieve any tasks from localStorage on page load
+let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+// Render tasks onto page
+function renderTasks() {
+  todoList.innerHTML = ''; // clear any existing tasks
+
+  // build each task
+  tasks.forEach(function (taskObject) {
     const newTask = document.createElement('li');
     const textContainer = document.createElement('span');
-    textContainer.innerText = todo.value;
+    // store taskInput into span element and add appropriate class names
+    textContainer.innerText = taskObject.text;
     textContainer.classList.add('todoText');
-    // add a class name to the newly created li
     newTask.classList.add('todo-task');
     newTask.appendChild(textContainer);
     todoList.appendChild(newTask);
-    todo.value = '';
 
     // create the complete and remove task buttons
     const completionBtn = document.createElement('button');
@@ -29,19 +29,46 @@ form.addEventListener('submit', function (e) {
     removeBtn.innerText = 'x';
     // append them to the task
     newTask.append(completionBtn, " ", removeBtn);
+  });
+}
 
-    localStorage.setItem('task', JSON.stringify(newTask));
+// Initialize render tasks on page load
+renderTasks();
+
+//Handle actions after user submits a new task
+form.addEventListener('submit', function (e) {
+  e.preventDefault();
+  // check if entered value is not empty, print error message if so
+  if (taskInput.value === '') {
+    alert('Your task cannot be empty!');
+  } else {
+    // create a new task object
+    const taskObject = {
+      text: taskInput.value,
+      completed: false,
+    };
+
+    // add task to task object array
+    tasks.push(taskObject);
+    // store tasks into local storage
+    localStorage.setItem('task', JSON.stringify(tasks));
+    // update new tasks to render
+    renderTasks();
+    taskInput.value = '';
   }
 })
 
 // strike out the task if complete has been clicked
-// if the x button is clicked, remove it
 todoList.addEventListener('click', function (e) {
   if (e.target.innerText === 'completed') {
     const doneTODO = e.target.parentElement.querySelector('.todoText');
-    doneTODO.classList.add('completed-todo');
+    doneTODO.classList.add('completed-task'); // this line will add the strike out css class
     e.target.remove();
+
+    // if the x button is clicked, remove it
   } else if (e.target.innerText === 'x') {
     e.target.parentElement.remove();
   }
 })
+
+
