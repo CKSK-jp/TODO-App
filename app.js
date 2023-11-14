@@ -5,10 +5,33 @@ const todoList = document.querySelector('#todo-list')
 // Retrieve any tasks from localStorage on page load
 let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
+//Handle actions after user submits a new task
+form.addEventListener('submit', function (e) {
+  e.preventDefault();
+  // check if entered value is not empty, print error message if so
+  if (taskInput.value === '') {
+    alert('Your task cannot be empty!');
+  } else {
+    // create a new task object with text and completed properties
+    const taskObject = {
+      text: taskInput.value,
+      completed: false,
+    };
+
+    // add task to task object array
+    tasks.push(taskObject);
+    // store tasks into local storage
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+    // update new tasks to render
+    renderTasks();
+    taskInput.value = '';
+  }
+})
+
 // Render tasks onto page
 function renderTasks() {
   todoList.innerHTML = ''; // clear any existing tasks
-
+  
   // build each task
   tasks.forEach(function (taskObject) {
     const newTask = document.createElement('li');
@@ -41,28 +64,6 @@ function renderTasks() {
 // Initialize render tasks on page load
 renderTasks();
 
-//Handle actions after user submits a new task
-form.addEventListener('submit', function (e) {
-  e.preventDefault();
-  // check if entered value is not empty, print error message if so
-  if (taskInput.value === '') {
-    alert('Your task cannot be empty!');
-  } else {
-    // create a new task object with text and completed properties
-    const taskObject = {
-      text: taskInput.value,
-      completed: false,
-    };
-
-    // add task to task object array
-    tasks.push(taskObject);
-    // store tasks into local storage
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-    // update new tasks to render
-    renderTasks();
-    taskInput.value = '';
-  }
-})
 
 // strike out the task if complete has been clicked
 todoList.addEventListener('click', function (e) {
