@@ -4,6 +4,7 @@ h1{
 
 .completed-todo {
   text-decoration: line-through;
+  text-decoration-color: red;
 }
 
 body {
@@ -19,7 +20,7 @@ body {
   flex-direction: column;
   align-items: center;
   background-color: #474748;
-  width: 50vw;
+  width: 70vw;
   padding-bottom: 10px;
   padding-top: 20px;
   border-radius: 20px;
@@ -28,7 +29,7 @@ body {
 ul {
   list-style-type: none;
   padding: 0;
-  width: 60vh;
+  width: 60vw;
 }
 
 li {
@@ -48,7 +49,7 @@ span {
 button {
   border-radius: 5px;
   border: 0.2px dotted black;
-  background-color: white;
+  background-color: lightgrey;
   margin: 2px;
 }
 
