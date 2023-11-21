@@ -28,10 +28,10 @@ function addTask(text) {
   if (!tasks) {
     tasks = [];
   }
-
+  // to account for dupe textInputs, append unique timestamp to text property
   const timestamp = new Date().toLocaleTimeString();
   const uniqueText = `${text} - ${timestamp}`;
-
+  // build task object
   const taskObject = {
     text: uniqueText,
     completed: false,
@@ -46,7 +46,7 @@ function addTask(text) {
 function renderTasks() {
   todoList.innerHTML = ''; // clear any existing tasks
 
-  // Build each task
+  // only run if task storage is not empty
   if (tasks !== null) {
     tasks.forEach(function (taskObject) {
       const newTask = document.createElement('li');
@@ -95,6 +95,7 @@ document.addEventListener('click', function (e) {
   }
 });
 
+// find the associated task using text property
 function handleCompletion(doneTODO, targettedTask) {
   const taskObject = tasks.find(function (task) {
     return task.text === doneTODO.innerText;
