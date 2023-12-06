@@ -1,119 +1,83 @@
-const taskInput = document.querySelector('#task-input');
-const form = document.querySelector('#todo-form');
-const todoList = document.querySelector('#todo-list')
-let tasks = [];
+const taskInput = $('#task-input');
+const form = $('form');
+const todoList = $('#todo-list');
+let tasks = null;
+let uniqueId = 0;
 
 // Retrieve any tasks from localStorage on page load, error if invalid JSON
 try {
+  console.log('reload from storage');
   tasks = JSON.parse(localStorage.getItem('tasks'));
 } catch (error) {
   console.error('Error parsing tasks from localStorage:', error);
 }
 
-// Handle actions after user submits a new task
-form.addEventListener('submit', function (e) {
+let currentTasks = tasks !== null ? [...tasks] : [];
+
+form.on('submit', function (e) {
   e.preventDefault();
-  // Check if entered value is not empty, print error message if so
-  if (taskInput.value === '') {
-    alert('Your task cannot be empty!');
-  } else {
-    // run addTask to create the task
-    addTask(taskInput.value);
-    taskInput.value = '';
-  }
+  createTask(taskInput.val());
+  taskInput.val('');
 });
 
 // add this new task object to our tasks array and store it into localStorage
-function addTask(text) {
-  if (!tasks) {
-    tasks = [];
-  }
-  // to account for dupe textInputs, append unique timestamp to text property
-  const timestamp = new Date().toLocaleTimeString();
-  const uniqueText = `${text} - ${timestamp}`;
-  // build task object
+function createTask(text) {
   const taskObject = {
-    text: uniqueText,
+    taskId: uniqueId++,
+    text,
     completed: false,
   };
-  tasks.push(taskObject);
-  localStorage.setItem('tasks', JSON.stringify(tasks));
-  // render newly made task
+  currentTasks.push(taskObject);
+  localStorage.setItem('tasks', JSON.stringify(currentTasks));
   renderTasks();
 }
 
 // Render tasks onto page
 function renderTasks() {
-  todoList.innerHTML = ''; // clear any existing tasks
+  todoList.empty();
 
-  // only run if task storage is not empty
-  if (tasks !== null) {
-    tasks.forEach(function (taskObject) {
-      const newTask = document.createElement('li');
-      const textContainer = document.createElement('span');
-  
-      // Store taskInput into span element and add appropriate class names
-      textContainer.innerText = taskObject.text;
-      textContainer.classList.add('todoText');
-      newTask.classList.add('todo-task');
-      newTask.appendChild(textContainer);
-      todoList.appendChild(newTask);
-  
-      // Create the complete and remove task buttons
-      const completionBtn = document.createElement('button');
-      completionBtn.innerText = 'completed';
-      const removeBtn = document.createElement('button');
-      removeBtn.innerText = 'x';
-      completionBtn.classList.add('completionBtn');
-      removeBtn.classList.add('removeBtn');
-  
-      // Check if a stored task has been completed, if so load the page with that class and the corresponding class to strike out the text, otherwise append both buttons to task.
-      if (taskObject.completed) {
-        textContainer.classList.add('completed-task');
-        newTask.append(removeBtn);
-      } else {
-        newTask.append(completionBtn, " ", removeBtn);
-      }
-    });
-  }
+  currentTasks.forEach((taskObject) => {
+    const newTask = ($('<li>')).addClass(`todo-task ${taskObject.taskId}`).appendTo(todoList);
+    const taskText = $(`<span>${taskObject.text}</span>`).appendTo(newTask);
+    const completeBtn = $('<button>completed</button>').addClass('complete-btn');
+    const removeBtn = $('<button>x</button>').addClass('remove-btn');
+
+    if (taskObject.completed) {
+      taskText.addClass('completed-task');
+      removeBtn.appendTo(newTask);
+    } else {
+      completeBtn.appendTo(newTask);
+      removeBtn.appendTo(newTask);
+    }
+  });
+
+  $('.todo-list button').on('click', function () {
+    const thisTaskID = $(this).parent().attr('class').split(' ')[1];
+    if ($(this).hasClass('complete-btn')) {
+      $(this).siblings('span').toggleClass('completed-task');
+      handleCompletion(thisTaskID);
+    } else {
+      handleRemoval(thisTaskID, $(this).parent());
+    }
+  });
 }
 
-// Initialize render tasks on page load
 renderTasks();
 
-// Strike out the task if complete has been clicked
-document.addEventListener('click', function (e) {
-  let targettedTask = e.target;
-  let doneTODO = targettedTask.parentElement.querySelector('span');
-
-  if (e.target.classList.contains('completionBtn')) {
-    handleCompletion(doneTODO, targettedTask);
-    doneTODO.classList.add('completed-task');
-  } else if (e.target.classList.contains('removeBtn')) {
-    handleRemoval(doneTODO, targettedTask);
-    doneTODO.classList.add('completed-task');
-  }
-});
-
 // find the associated task using text property
-function handleCompletion(doneTODO, targettedTask) {
-  const taskObject = tasks.find(function (task) {
-    return task.text === doneTODO.innerText;
-  });
+function handleCompletion(selectedTask) {
+  const taskObject = currentTasks.find((task) => task.taskId.toString() === selectedTask);
   taskObject.completed = true;
-  localStorage.setItem('tasks', JSON.stringify(tasks));
-  targettedTask.remove();
+  localStorage.setItem('tasks', JSON.stringify(currentTasks));
   renderTasks();
 }
 
-function handleRemoval(doneTODO, targettedTask) {
-  targettedTask.parentElement.remove();
-  const taskIndex = tasks.findIndex(function (task) {
-    return task.text === doneTODO.innerText;
-  });
+function handleRemoval(selectedTask, targettedTask) {
+  targettedTask.remove();
+  const taskIndex = currentTasks.findIndex((task) => task.taskId.toString() === selectedTask);
 
   if (taskIndex !== -1) {
-    tasks.splice(taskIndex, 1);
-    localStorage.setItem('tasks', JSON.stringify(tasks));
+    currentTasks.splice(taskIndex, 1);
+    localStorage.setItem('tasks', JSON.stringify(currentTasks));
   }
 }

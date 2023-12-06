@@ -53,14 +53,18 @@ button {
   margin: 2px;
 }
 
-.completionBtn:hover {
+button:hover {
+  cursor: pointer;
+}
+
+.complete-btn:hover {
   background-color: lightgreen;
 }
 
-.removeBtn:hover {
+.remove-btn:hover {
   background-color: lightcoral;
 }
 
-.addBtn:hover {
+.add-btn:hover {
   background-color: gold;
 }
