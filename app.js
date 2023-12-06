@@ -6,7 +6,6 @@ let uniqueId = 0;
 
 // Retrieve any tasks from localStorage on page load, error if invalid JSON
 try {
-  console.log('reload from storage');
   tasks = JSON.parse(localStorage.getItem('tasks'));
 } catch (error) {
   console.error('Error parsing tasks from localStorage:', error);
@@ -64,7 +63,7 @@ function renderTasks() {
 
 renderTasks();
 
-// find the associated task using text property
+// handles for updating the task list when button clicked
 function handleCompletion(selectedTask) {
   const taskObject = currentTasks.find((task) => task.taskId.toString() === selectedTask);
   taskObject.completed = true;
@@ -75,7 +74,6 @@ function handleCompletion(selectedTask) {
 function handleRemoval(selectedTask, targettedTask) {
   targettedTask.remove();
   const taskIndex = currentTasks.findIndex((task) => task.taskId.toString() === selectedTask);
-
   if (taskIndex !== -1) {
     currentTasks.splice(taskIndex, 1);
     localStorage.setItem('tasks', JSON.stringify(currentTasks));
